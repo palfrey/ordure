@@ -4,6 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.remote.webelement import WebElement
 
+
 class Driver:
     def __init__(self):
         options = webdriver.ChromeOptions()
@@ -15,7 +16,7 @@ class Driver:
 
     def log(self, msg):
         print(f"{time.time()-self.start:0.3f}: {msg}")
-    
+
     def get(self, url):
         self.log(f"Getting {url}")
         self.driver.get(url)

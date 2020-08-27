@@ -2,3 +2,4 @@ pip-tools
 selenium
 todoist-python
 pyyaml
+black
