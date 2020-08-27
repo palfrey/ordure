@@ -1,57 +1,18 @@
 from datetime import datetime, timedelta
 import re
-import time
 from selenium.webdriver.common.by import By
-from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.select import Select
-from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 import todoist
 import calendar
+from driver import Driver
 
 import yaml
 
 settings_name = "settings.yaml"
-
 settings = yaml.safe_load(open(settings_name))
 
-class Driver:
-    def __init__(self):
-        options = webdriver.ChromeOptions()
-        options.headless = True
-        options.add_argument("--no-sandbox")
-        self.driver = webdriver.Chrome(options=options)
-        self.driver.set_window_size(1600, 1200)
-        self.start = time.time()
-
-    def log(self, msg):
-        print(f"{time.time()-self.start:0.3f}: {msg}")
-    
-    def get(self, url):
-        self.log(f"Getting {url}")
-        self.driver.get(url)
-
-    def find_element(self, by, spec) -> WebElement:
-        self.log(f"Finding {by}, {spec}")
-        elements = self.driver.find_elements(by, spec)
-        if len(elements) == 0:
-            raise Exception("No elements!")
-        if len(elements) > 1:
-            raise Exception(f"Multiple elements: {elements}")
-        return elements[0]
-
-    def wait_for_element(self, by, spec) -> WebElement:
-        self.log(f"Waiting for {by}, {spec}")
-        return WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((by, spec))
-        )
-
-    def quit(self):
-        self.driver.quit()
-
+driver = Driver()
 try:
-    driver = Driver()
     driver.get("https://lewisham.gov.uk/myservices/wasterecycle/your-bins/collection")
     driver.find_element(By.CLASS_NAME, 'js-address-finder-input').send_keys(settings['postcode'])
     driver.find_element(By.CLASS_NAME, "js-address-finder-step-address").click()
