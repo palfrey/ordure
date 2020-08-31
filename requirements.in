@@ -3,3 +3,6 @@ selenium
 todoist-python
 pyyaml
 black
+requests
+beautifulsoup4
+dateparser

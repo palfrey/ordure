@@ -1,15 +1,33 @@
 from datetime import datetime, timedelta
 import re
+from typing import List
+from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 import todoist
 import calendar
 from driver import Driver
+import requests
+from bs4 import BeautifulSoup
+from bs4.element import Tag
+import dateparser
 
 import yaml
 
 settings_name = "settings.yaml"
 settings = yaml.safe_load(open(settings_name))
+
+bank_holiday_data = requests.get(
+    "https://lewisham.gov.uk/myservices/wasterecycle/rubbish-and-recycling-collections-after-bank-holidays"
+)
+bank_holiday_data.raise_for_status()
+soup = BeautifulSoup(bank_holiday_data.text, "html.parser")
+table: Tag = soup.find("table", class_="markup-table")
+cells = table.find_all("td", class_="markup-td")
+cells = [dateparser.parse(c.contents[0].string) for c in cells][2:]
+cells = [c.date() for c in cells]
+switch_dates = dict(zip(cells[::2], cells[1::2]))
+print("Bank holiday dates", switch_dates)
 
 driver = Driver()
 try:
@@ -60,6 +78,9 @@ for job in jobs:
             when = now + timedelta(days=wantedDayNumber - dayNumber)
         else:
             when = now + timedelta(days=wantedDayNumber - dayNumber + 7)
+    when = when.date()
+    if when in switch_dates:
+        when = switch_dates[when]
     when -= timedelta(days=1)
     due = {"date": when.strftime("%Y-%m-%d")}
     due["string"] = due["date"]
