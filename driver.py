@@ -1,5 +1,7 @@
+import os
 from selenium import webdriver
 import time
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.remote.webelement import WebElement
@@ -7,10 +9,14 @@ from selenium.webdriver.remote.webelement import WebElement
 
 class Driver:
     def __init__(self):
-        options = webdriver.ChromeOptions()
-        options.headless = True
-        options.add_argument("--no-sandbox")
-        self.driver = webdriver.Chrome(options=options)
+        remote_url = os.environ.get("REMOTE_SELENIUM")
+        if remote_url is None:
+            options = webdriver.ChromeOptions()
+            options.headless = True
+            options.add_argument("--no-sandbox")
+            self.driver = webdriver.Chrome(options=options)
+        else:
+            self.driver = webdriver.Remote(remote_url, desired_capabilities=DesiredCapabilities.CHROME)
         self.driver.set_window_size(1600, 1200)
         self.start = time.time()
 
