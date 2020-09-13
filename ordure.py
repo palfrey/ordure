@@ -23,10 +23,13 @@ bank_holiday_data = requests.get(
 bank_holiday_data.raise_for_status()
 soup = BeautifulSoup(bank_holiday_data.text, "html.parser")
 table: Tag = soup.find("table", class_="markup-table")
-cells = table.find_all("td", class_="markup-td")
-cells = [dateparser.parse(c.contents[0].string) for c in cells][2:]
-cells = [c.date() for c in cells]
-switch_dates = dict(zip(cells[::2], cells[1::2]))
+if table is not None:
+    cells = table.find_all("td", class_="markup-td")
+    cells = [dateparser.parse(c.contents[0].string) for c in cells][2:]
+    cells = [c.date() for c in cells]
+    switch_dates = dict(zip(cells[::2], cells[1::2]))
+else:
+    switch_dates = {}
 print("Bank holiday dates", switch_dates)
 
 driver = Driver()
