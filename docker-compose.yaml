@@ -4,6 +4,7 @@ services:
         image: selenium/standalone-chrome:3.141.59-20200826
     ordure:
         build: .
+        command: bash -c "wait-for-it selenium:4444 && python ordure.py"
         volumes:
             - .:/app
         environment:
