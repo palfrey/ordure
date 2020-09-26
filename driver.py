@@ -16,7 +16,9 @@ class Driver:
             options.add_argument("--no-sandbox")
             self.driver = webdriver.Chrome(options=options)
         else:
-            self.driver = webdriver.Remote(remote_url, desired_capabilities=DesiredCapabilities.CHROME)
+            self.driver = webdriver.Remote(
+                remote_url, desired_capabilities=DesiredCapabilities.CHROME
+            )
         self.driver.set_window_size(1600, 1200)
         self.start = time.time()
 

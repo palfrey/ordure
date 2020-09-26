@@ -6,3 +6,4 @@ black
 requests
 beautifulsoup4
 dateparser
+retry
