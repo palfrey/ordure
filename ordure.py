@@ -43,6 +43,7 @@ def get_job_data():
         driver.get(
             "https://lewisham.gov.uk/myservices/wasterecycle/your-bins/collection"
         )
+        driver.find_element(By.CLASS_NAME, "cookie-banner__close").click()        
         driver.find_element(By.CLASS_NAME, "js-address-finder-input").send_keys(
             settings["postcode"]
         )
