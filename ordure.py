@@ -23,20 +23,22 @@ settings = yaml.safe_load(open(settings_name))
 
 @retry(TimeoutException, tries=5, delay=10)
 def get_job_data():
+    switch_dates = {}
     bank_holiday_data = requests.get(
         "https://lewisham.gov.uk/myservices/wasterecycle/rubbish-and-recycling-collections-after-bank-holidays"
     )
-    bank_holiday_data.raise_for_status()
-    soup = BeautifulSoup(bank_holiday_data.text, "html.parser")
-    table: Tag = soup.find("table", class_="markup-table")
-    if table is not None:
-        cells = table.find_all("td", class_="markup-td")
-        cells = [dateparser.parse(c.contents[0].string) for c in cells][2:]
-        cells = [c.date() for c in cells]
-        switch_dates = dict(zip(cells[::2], cells[1::2]))
+    if bank_holiday_data.status_code == 404:
+        print("No bank holiday page")
     else:
-        switch_dates = {}
-    print("Bank holiday dates", switch_dates)
+        bank_holiday_data.raise_for_status()
+        soup = BeautifulSoup(bank_holiday_data.text, "html.parser")
+        table: Tag = soup.find("table", class_="markup-table")
+        if table is not None:
+            cells = table.find_all("td", class_="markup-td")
+            cells = [dateparser.parse(c.contents[0].string) for c in cells][2:]
+            cells = [c.date() for c in cells]
+            switch_dates = dict(zip(cells[::2], cells[1::2]))
+        print("Bank holiday dates", switch_dates)
 
     driver = Driver()
     try:
