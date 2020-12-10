@@ -10,7 +10,7 @@ import calendar
 from driver import Driver
 import requests
 from bs4 import BeautifulSoup
-from bs4.element import Tag
+from bs4.element import NavigableString, Tag
 import dateparser
 
 import yaml
@@ -35,8 +35,22 @@ def get_job_data():
         table: Tag = soup.find("table", class_="markup-table")
         if table is not None:
             cells = table.find_all("td", class_="markup-td")
-            cells = [dateparser.parse(c.contents[0].string) for c in cells][2:]
-            cells = [c.date() for c in cells]
+            def get_inner(tag):
+                children = list(tag.children)
+                if len(children) > 0:
+                    for c in children:
+                        if isinstance(c, NavigableString):
+                            if c.string.strip() == "":
+                                continue
+                            return c.string
+                        if isinstance(c, Tag):
+                            return get_inner(c)
+                        raise Exception(c)
+                return tag.contents[0].string
+
+            print([(c, get_inner(c)) for c in cells])
+            cells = [dateparser.parse(get_inner(c)) for c in cells]
+            cells = [c.date() for c in cells if c is not None]
             switch_dates = dict(zip(cells[::2], cells[1::2]))
         print("Bank holiday dates", switch_dates)
 
