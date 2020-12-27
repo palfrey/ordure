@@ -21,7 +21,7 @@ settings_name = "settings.yaml"
 settings = yaml.safe_load(open(settings_name))
 
 
-@retry(TimeoutException, tries=5, delay=10)
+@retry((TimeoutException, requests.exceptions.ConnectionError), tries=5, delay=10)
 def get_job_data():
     switch_dates = {}
     bank_holiday_data = requests.get(
