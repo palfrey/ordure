@@ -16,6 +16,9 @@ import dateparser
 import yaml
 from retry import retry
 
+import logging
+logging.basicConfig(level=logging.INFO)
+
 
 settings_name = "settings.yaml"
 settings = yaml.safe_load(open(settings_name))
