@@ -4,35 +4,96 @@
 #
 #    pip-compile
 #
-appdirs==1.4.4            # via black
-beautifulsoup4==4.9.1     # via -r requirements.in
-black==20.8b1             # via -r requirements.in
-certifi==2020.6.20        # via requests
-chardet==3.0.4            # via requests
-click==7.1.2              # via black, pip-tools
-dateparser==0.7.6         # via -r requirements.in
-decorator==4.4.2          # via retry
-idna==2.10                # via requests
-mypy-extensions==0.4.3    # via black
-pathspec==0.8.0           # via black
-pip-tools==5.3.1          # via -r requirements.in
-py==1.9.0                 # via retry
-python-dateutil==2.8.1    # via dateparser
-pytz==2020.1              # via dateparser, tzlocal
-pyyaml==5.3.1             # via -r requirements.in
-regex==2020.7.14          # via black, dateparser
-requests==2.24.0          # via -r requirements.in, todoist-python
-retry==0.9.2              # via -r requirements.in
-selenium==3.141.0         # via -r requirements.in
-six==1.15.0               # via pip-tools, python-dateutil
-soupsieve==2.0.1          # via beautifulsoup4
-todoist-python==8.1.2     # via -r requirements.in
-toml==0.10.1              # via black
-typed-ast==1.4.1          # via black
-typing-extensions==3.7.4.3  # via black
-typing==3.7.4.3           # via todoist-python
-tzlocal==2.1              # via dateparser
-urllib3==1.25.10          # via requests, selenium
+appdirs==1.4.4
+    # via
+    #   black
+    #   virtualenv
+beautifulsoup4==4.9.1
+    # via -r requirements.in
+black==20.8b1
+    # via -r requirements.in
+certifi==2020.6.20
+    # via requests
+cfgv==3.2.0
+    # via pre-commit
+chardet==3.0.4
+    # via requests
+click==7.1.2
+    # via
+    #   black
+    #   pip-tools
+dateparser==0.7.6
+    # via -r requirements.in
+decorator==4.4.2
+    # via retry
+distlib==0.3.1
+    # via virtualenv
+filelock==3.0.12
+    # via virtualenv
+identify==1.5.13
+    # via pre-commit
+idna==2.10
+    # via requests
+mypy-extensions==0.4.3
+    # via black
+nodeenv==1.5.0
+    # via pre-commit
+pathspec==0.8.0
+    # via black
+pip-tools==5.5.0
+    # via -r requirements.in
+pre-commit==2.9.3
+    # via -r requirements.in
+py==1.9.0
+    # via retry
+python-dateutil==2.8.1
+    # via dateparser
+pytz==2020.1
+    # via
+    #   dateparser
+    #   tzlocal
+pyyaml==5.3.1
+    # via
+    #   -r requirements.in
+    #   pre-commit
+regex==2020.7.14
+    # via
+    #   black
+    #   dateparser
+requests==2.24.0
+    # via
+    #   -r requirements.in
+    #   todoist-python
+retry==0.9.2
+    # via -r requirements.in
+selenium==3.141.0
+    # via -r requirements.in
+six==1.15.0
+    # via
+    #   python-dateutil
+    #   virtualenv
+soupsieve==2.0.1
+    # via beautifulsoup4
+todoist-python==8.1.2
+    # via -r requirements.in
+toml==0.10.1
+    # via
+    #   black
+    #   pre-commit
+typed-ast==1.4.1
+    # via black
+typing-extensions==3.7.4.3
+    # via black
+typing==3.7.4.3
+    # via todoist-python
+tzlocal==2.1
+    # via dateparser
+urllib3==1.25.10
+    # via
+    #   requests
+    #   selenium
+virtualenv==20.3.1
+    # via pre-commit
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip

@@ -1,22 +1,21 @@
-from datetime import datetime, timedelta
-import re
-from typing import List
-from bs4 import BeautifulSoup
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.select import Select
-from selenium.common.exceptions import TimeoutException
-import todoist
 import calendar
-from driver import Driver
+import logging
+import re
+from datetime import datetime, timedelta
+
+import dateparser
 import requests
+import todoist
+import yaml
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString, Tag
-import dateparser
-
-import yaml
 from retry import retry
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.select import Select
 
-import logging
+from driver import Driver
+
 logging.basicConfig(level=logging.INFO)
 
 
@@ -28,7 +27,7 @@ settings = yaml.safe_load(open(settings_name))
 def get_job_data():
     switch_dates = {}
     bank_holiday_data = requests.get(
-        "https://lewisham.gov.uk/myservices/wasterecycle/rubbish-and-recycling-collections-after-bank-holidays"
+        "https://lewisham.gov.uk/myservices/wasterecycle/rubbish-and-recycling-collections-after-bank-holidays"  # noqa: E501
     )
     if bank_holiday_data.status_code == 404:
         print("No bank holiday page")
@@ -38,6 +37,7 @@ def get_job_data():
         table: Tag = soup.find("table", class_="markup-table")
         if table is not None:
             cells = table.find_all("td", class_="markup-td")
+
             def get_inner(tag):
                 children = list(tag.children)
                 if len(children) > 0:
@@ -62,7 +62,7 @@ def get_job_data():
         driver.get(
             "https://lewisham.gov.uk/myservices/wasterecycle/your-bins/collection"
         )
-        driver.find_element(By.CLASS_NAME, "cookie-banner__close").click()        
+        driver.find_element(By.CLASS_NAME, "cookie-banner__close").click()
         driver.find_element(By.CLASS_NAME, "js-address-finder-input").send_keys(
             settings["postcode"]
         )
@@ -81,7 +81,7 @@ def get_job_data():
             raise Exception
         res = driver.wait_for_element(By.CLASS_NAME, "js-find-collection-result")
         bin_pattern = re.compile(
-            r"(?P<type>[A-Za-z]+) is collected (?P<frequency>[A-Z]+) on (?P<day>[A-Za-z]+)\.(?: Your next collection date is (?P<date>\d+/\d+/\d+))?"
+            r"(?P<type>[A-Za-z]+) is collected (?P<frequency>[A-Z]+) on (?P<day>[A-Za-z]+)\.(?: Your next collection date is (?P<date>\d+/\d+/\d+))?"  # noqa: E501
         )
         print(res.text)
         jobs = [m.groupdict() for m in bin_pattern.finditer(res.text)]
