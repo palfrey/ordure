@@ -64,7 +64,20 @@ def get_job_data():
         )
         driver.find_element(By.CLASS_NAME, "cookie-banner__close").click()
         if driver.source().find("bank holiday") != -1 and switch_dates == {}:
-            raise Exception("Seeing mention of bank holiday, but no dates known!")
+            print("Seeing mention of bank holiday, but no dates known!")
+            extra_dates_patt = re.compile(
+                r"of the bank holiday on (.+)</span>\. Your bins will be collected the day after your normal collection day. Normal collections will resume on ([^\.]+)\."  # noqa: E501
+            )
+            extra_dates = extra_dates_patt.search(driver.source())
+            assert extra_dates is not None
+            (start, end) = [dateparser.parse(d).date() for d in extra_dates.groups()]
+            current = start
+            while current < end:
+                switch_dates[current] = current + timedelta(days=1)
+                current += timedelta(days=1)
+            print("Revised bank holiday dates", switch_dates)
+            assert switch_dates != {}
+
         driver.find_element(By.CLASS_NAME, "js-address-finder-input").send_keys(
             settings["postcode"]
         )
