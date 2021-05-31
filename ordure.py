@@ -63,6 +63,8 @@ def get_job_data():
             "https://lewisham.gov.uk/myservices/wasterecycle/your-bins/collection"
         )
         driver.find_element(By.CLASS_NAME, "cookie-banner__close").click()
+        if driver.source().find("bank holiday") != -1 and switch_dates == {}:
+            raise Exception("Seeing mention of bank holiday, but no dates known!")
         driver.find_element(By.CLASS_NAME, "js-address-finder-input").send_keys(
             settings["postcode"]
         )

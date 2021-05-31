@@ -47,3 +47,6 @@ class Driver:
 
     def quit(self):
         self.driver.quit()
+
+    def source(self):
+        return self.driver.page_source
