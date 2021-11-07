@@ -4,7 +4,7 @@ services:
     image: selenium/standalone-firefox:94.0-20211105
   ordure:
     build: .
-    command: bash -c "wait-for-it selenium:4444 && python ordure.py"
+    command: bash -c "wait-for-it selenium:4444 --timeout 300 && python ordure.py"
     #command: sleep infinity
     volumes:
     - .:/app
