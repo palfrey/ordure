@@ -18,9 +18,9 @@ class Driver:
             self.driver = webdriver.Chrome(options=options)
         else:
             self.driver = webdriver.Remote(
-                remote_url, desired_capabilities=DesiredCapabilities.CHROME
+                remote_url, desired_capabilities=DesiredCapabilities.FIREFOX
             )
-        self.driver.set_window_size(1600, 1200)
+        self.driver.set_window_size(1600, 3200)
         self.start = time.time()
 
     def log(self, msg):
@@ -50,3 +50,10 @@ class Driver:
 
     def source(self):
         return self.driver.page_source
+
+    def logs(self):
+        for log in self.driver.get_log("browser"):
+            print("LOG", log)
+
+    def screenshot(self):
+        self.driver.save_screenshot("screenshot.png")

@@ -1,6 +1,7 @@
 import calendar
 import logging
 import re
+import time
 from datetime import datetime, timedelta
 
 import dateparser
@@ -10,7 +11,7 @@ import yaml
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString, Tag
 from retry import retry
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 
@@ -62,7 +63,9 @@ def get_job_data():
         driver.get(
             "https://lewisham.gov.uk/myservices/wasterecycle/your-bins/collection"
         )
-        driver.find_element(By.CLASS_NAME, "cookie-banner__close").click()
+        driver.wait_for_element(
+            By.ID, "CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll"
+        ).click()
         if driver.source().find("bank holiday") != -1 and switch_dates == {}:
             print("Seeing mention of bank holiday, but no dates known!")
             extra_dates_patt = re.compile(
@@ -81,12 +84,21 @@ def get_job_data():
         driver.find_element(By.CLASS_NAME, "js-address-finder-input").send_keys(
             settings["postcode"]
         )
+        time.sleep(0.5)
         driver.find_element(By.CLASS_NAME, "js-address-finder-step-address").click()
-        select = Select(
-            driver.wait_for_element(
-                By.CSS_SELECTOR, "select#address-selector option:nth-of-type(1)"
-            ).find_element(By.XPATH, "..")
-        )
+        driver.wait_for_element(By.CSS_SELECTOR, "select#address-selector")
+        for _ in range(5):
+            try:
+                select = Select(driver.find_element(By.ID, "address-selector"))
+                if len(select.options) > 0:
+                    break
+                driver.screenshot()
+                time.sleep(3)
+            except StaleElementReferenceException:
+                pass
+        else:
+            raise Exception("panic!")
+        print("options", len(select.options))
         for opt in select.options:
             if opt.text.find(settings["address"]) != -1:
                 print(opt.get_attribute("value"), opt.text)

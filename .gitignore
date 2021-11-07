@@ -1,3 +1,4 @@
 .vscode/
 settings.yaml
 __pycache__/
+*.png
