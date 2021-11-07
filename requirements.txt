@@ -44,7 +44,7 @@ pip-tools==5.5.0
     # via -r requirements.in
 pre-commit==2.9.3
     # via -r requirements.in
-py==1.9.0
+py==1.10.0
     # via retry
 python-dateutil==2.8.1
     # via dateparser
@@ -82,10 +82,10 @@ toml==0.10.1
     #   pre-commit
 typed-ast==1.4.1
     # via black
-typing-extensions==3.7.4.3
-    # via black
 typing==3.7.4.3
     # via todoist-python
+typing-extensions==3.7.4.3
+    # via black
 tzlocal==2.1
     # via dateparser
 urllib3==1.25.10
