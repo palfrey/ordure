@@ -16,7 +16,7 @@ certifi==2020.6.20
     # via requests
 cfgv==3.2.0
     # via pre-commit
-chardet==3.0.4
+charset-normalizer==2.0.7
     # via requests
 click==7.1.2
     # via
@@ -60,7 +60,7 @@ regex==2020.7.14
     # via
     #   black
     #   dateparser
-requests==2.24.0
+requests==2.26.0
     # via
     #   -r requirements.in
     #   todoist-python
@@ -82,13 +82,13 @@ toml==0.10.1
     #   pre-commit
 typed-ast==1.4.1
     # via black
-typing==3.7.4.3
-    # via todoist-python
 typing-extensions==3.7.4.3
     # via black
+typing==3.7.4.3
+    # via todoist-python
 tzlocal==2.1
     # via dateparser
-urllib3==1.25.10
+urllib3==1.26.7
     # via
     #   requests
     #   selenium
