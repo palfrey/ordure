@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 
 import dateparser
 import requests
+import selenium
 import todoist
 import yaml
 from bs4 import BeautifulSoup
@@ -35,27 +36,29 @@ def get_job_data():
     else:
         bank_holiday_data.raise_for_status()
         soup = BeautifulSoup(bank_holiday_data.text, "html.parser")
-        table: Tag = soup.find("table", class_="markup-table")
-        if table is not None:
-            cells = table.find_all("td", class_="markup-td")
+        items = soup.find_all("li", class_="markup-li")
 
-            def get_inner(tag):
-                children = list(tag.children)
-                if len(children) > 0:
-                    for c in children:
-                        if isinstance(c, NavigableString):
-                            if c.string.strip() == "":
-                                continue
-                            return c.string
-                        if isinstance(c, Tag):
-                            return get_inner(c)
-                        raise Exception(c)
-                return tag.contents[0].string
+        def get_inner(tag):
+            children = list(tag.children)
+            if len(children) > 0:
+                for c in children:
+                    if isinstance(c, NavigableString):
+                        if c.string.strip() == "":
+                            continue
+                        return c.string
+                    if isinstance(c, Tag):
+                        return get_inner(c)
+                    raise Exception(c)
+            return tag.contents[0].string
 
-            print([(c, get_inner(c)) for c in cells])
-            cells = [dateparser.parse(get_inner(c)) for c in cells]
-            cells = [c.date() for c in cells if c is not None]
-            switch_dates = dict(zip(cells[::2], cells[1::2]))
+        cells = [get_inner(c) for c in items]
+        print(cells)
+        cells = [
+            (dateparser.parse(c[0]), dateparser.parse(c[1]))
+            for c in [re.split(r"[-–]", i) for i in cells]
+        ]
+        cells = [(c[0].date(), c[1].date()) for c in cells if c is not None]
+        switch_dates = dict(zip(cells[0], cells[1]))
         print("Bank holiday dates", switch_dates)
 
     driver = Driver()
@@ -63,9 +66,12 @@ def get_job_data():
         driver.get(
             "https://lewisham.gov.uk/myservices/wasterecycle/your-bins/collection"
         )
-        driver.wait_for_element(
-            By.ID, "CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll"
-        ).click()
+        try:
+            driver.wait_for_element(
+                By.ID, "CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll"
+            ).click()
+        except selenium.common.exceptions.ElementNotInteractableException:
+            pass
         if driver.source().find("bank holiday") != -1 and switch_dates == {}:
             print("Seeing mention of bank holiday, but no dates known!")
             extra_dates_patt = re.compile(
