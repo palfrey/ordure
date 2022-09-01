@@ -4,4 +4,4 @@ RUN curl -o /usr/bin/wait-for-it https://raw.githubusercontent.com/vishnubob/wai
 COPY requirements.txt /app
 RUN pip install -r requirements.txt
 COPY . .
-CMD python ordure.py
+CMD python -u ordure.py

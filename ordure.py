@@ -29,14 +29,14 @@ settings = yaml.safe_load(open(settings_name))
 def get_job_data():
     switch_dates = {}
     bank_holiday_data = requests.get(
-        "https://lewisham.gov.uk/myservices/wasterecycle/rubbish-and-recycling-collections-after-bank-holidays"  # noqa: E501
+        "https://lewisham.gov.uk/myservices/wasterecycle/your-bins/collection/bank-holiday-bins"  # noqa: E501
     )
     if bank_holiday_data.status_code == 404:
         print("No bank holiday page")
     else:
         bank_holiday_data.raise_for_status()
         soup = BeautifulSoup(bank_holiday_data.text, "html.parser")
-        items = soup.find_all("li", class_="markup-li")
+        items = soup.find_all("td", class_="markup-td")
 
         def get_inner(tag):
             children = list(tag.children)
@@ -51,14 +51,13 @@ def get_job_data():
                     raise Exception(c)
             return tag.contents[0].string
 
-        cells = [get_inner(c) for c in items]
-        print(cells)
-        cells = [
-            (dateparser.parse(c[0]), dateparser.parse(c[1]))
-            for c in [re.split(r"[-–]", i) for i in cells]
-        ]
-        cells = [(c[0].date(), c[1].date()) for c in cells if c is not None]
-        switch_dates = dict(zip(cells[0], cells[1]))
+        cells = [get_inner(c).replace("(Bank Holiday)", "") for c in items]
+        pairs = list(zip(cells[::2], cells[1::2]))[1:]
+        print("pairs", pairs)
+        cells = [(dateparser.parse(c[0]), dateparser.parse(c[1])) for c in pairs]
+        cells = [(c[0].date(), c[1].date()) for c in cells]
+        print("cells", cells)
+        switch_dates = dict(cells)
         print("Bank holiday dates", switch_dates)
 
     driver = Driver()
@@ -78,18 +77,18 @@ def get_job_data():
             # FIXME: commented out because the current bank holiday link is to
             # https://lewisham.gov.uk/sitecore/service/notfound.aspx?item=web%3a%7bCDD0AC08-2FA4-4ED4-99FC-39B5829F4432%7d%40en
 
-            # extra_dates_patt = re.compile(
-            #     r"of the bank holiday on (.+)</span>\. Your bins will be collected the day after your normal collection day. Normal collections will resume on ([^\.]+)\."  # noqa: E501
-            # )
-            # extra_dates = extra_dates_patt.search(driver.source())
-            # assert extra_dates is not None, extra_dates
-            # (start, end) = [dateparser.parse(d).date() for d in extra_dates.groups()]
-            # current = start
-            # while current < end:
-            #     switch_dates[current] = current + timedelta(days=1)
-            #     current += timedelta(days=1)
-            # print("Revised bank holiday dates", switch_dates)
-            # assert switch_dates != {}
+            extra_dates_patt = re.compile(
+                r"of the bank holiday on (.+)</span>\. Your bins will be collected the day after your normal collection day. Normal collections will resume on ([^\.]+)\."  # noqa: E501
+            )
+            extra_dates = extra_dates_patt.search(driver.source())
+            assert extra_dates is not None, extra_dates
+            (start, end) = [dateparser.parse(d).date() for d in extra_dates.groups()]
+            current = start
+            while current < end:
+                switch_dates[current] = current + timedelta(days=1)
+                current += timedelta(days=1)
+            print("Revised bank holiday dates", switch_dates)
+            assert switch_dates != {}
 
         driver.find_element(By.CLASS_NAME, "js-address-finder-input").send_keys(
             settings["postcode"]
