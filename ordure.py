@@ -93,7 +93,7 @@ def get_job_data():
         driver.find_element(By.CLASS_NAME, "js-address-finder-input").send_keys(
             settings["postcode"]
         )
-        time.sleep(0.5)
+        time.sleep(5)
         driver.find_element(By.CLASS_NAME, "js-address-finder-step-address").click()
         driver.wait_for_element(By.CSS_SELECTOR, "select#address-selector")
         for _ in range(5):
