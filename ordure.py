@@ -117,7 +117,7 @@ def get_job_data():
             raise Exception
         res = driver.wait_for_element(By.CLASS_NAME, "js-find-collection-result")
         bin_pattern = re.compile(
-            r"(?P<type>[A-Za-z]+) is collected (?P<frequency>[A-Z]+) on (?P<day>[A-Za-z]+)\.(?: Your next collection date is (?P<date>\d+/\d+/\d+))?"  # noqa: E501
+            r"(?P<type>[A-Za-z ]+) is collected (?P<frequency>[A-Z]+) on (?P<day>[A-Za-z]+)\.(?: Your next collection date is (?P<date>\d+/\d+/\d+))?"  # noqa: E501
         )
         print(res.text)
         jobs = [m.groupdict() for m in bin_pattern.finditer(res.text)]
