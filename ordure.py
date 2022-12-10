@@ -55,7 +55,11 @@ def get_job_data():
         pairs = list(zip(cells[::2], cells[1::2]))[1:]
         print("pairs", pairs)
         cells = [(dateparser.parse(c[0]), dateparser.parse(c[1])) for c in pairs]
-        cells = [(c[0].date(), c[1].date()) for c in cells]
+        cells = [
+            (c[0].date(), c[1].date())
+            for c in cells
+            if c[0] is not None and c[1] is not None
+        ]
         print("cells", cells)
         switch_dates = dict(cells)
         print("Bank holiday dates", switch_dates)
@@ -161,6 +165,7 @@ for job in jobs:
         settings["tasks"][job["type"]] = {}
     job_id = settings["tasks"][job["type"]].get("id", None)
     if job_id is not None:
+        print("id", job_id)
         item = api.items.get_by_id(job_id)
     else:
         item = search_for_job(name)
