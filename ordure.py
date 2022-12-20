@@ -7,7 +7,6 @@ from datetime import datetime, timedelta
 import dateparser
 import requests
 import selenium
-import todoist
 import yaml
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString, Tag
@@ -15,6 +14,7 @@ from retry import retry
 from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
+from todoist_api_python.api import TodoistAPI
 
 from driver import Driver
 
@@ -139,8 +139,7 @@ def search_for_job(name):
 
 (switch_dates, jobs) = get_job_data()
 
-api = todoist.TodoistAPI(settings["api_key"])
-print(api.sync())
+api = TodoistAPI(settings["api_key"])
 for job in jobs:
     if job["date"]:
         when = datetime.strptime(job["date"], "%d/%m/%Y")
@@ -156,8 +155,7 @@ for job in jobs:
     if when in switch_dates:
         when = switch_dates[when]
     when -= timedelta(days=1)
-    due = {"date": when.strftime("%Y-%m-%d")}
-    due["string"] = due["date"]
+    due = when.strftime("%Y-%m-%d")
     name = f"Take out the {job['type']}"
     if "tasks" not in settings:
         settings["tasks"] = {}
@@ -166,21 +164,19 @@ for job in jobs:
     job_id = settings["tasks"][job["type"]].get("id", None)
     if job_id is not None:
         print("id", job_id)
-        item = api.items.get_by_id(job_id)
+        item = api.get_task(task_id=job_id)
     else:
         item = search_for_job(name)
 
     if item is not None:
-        settings["tasks"][job["type"]]["id"] = item["id"]
+        settings["tasks"][job["type"]]["id"] = item.id
         print(name, when)
-        if item["due"]["date"] != due["date"]:
+        if item.due.date != due:
             print("updating")
-            item = api.items.get_by_id(item["id"])
-            item.update(due=due)
-            item.unarchive()
+            success = api.update_task(task_id=item.id, due_date=due, is_completed=False)
+            assert success, success
         print(item)
     else:
-        task = api.items.add(name, due=due)
+        task = api.add_task(content=name, due_date=due)
         print("Creating", name)
 yaml.safe_dump(settings, open(settings_name, "w"))
-api.commit()

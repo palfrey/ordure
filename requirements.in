@@ -1,6 +1,6 @@
 pip-tools
 selenium
-todoist-python
+todoist-api-python
 pyyaml
 black
 requests
