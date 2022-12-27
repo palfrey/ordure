@@ -132,8 +132,8 @@ def get_job_data():
 
 
 def search_for_job(name):
-    for item in api.state["items"]:
-        if item["content"] == name:
+    for item in api.get_tasks():
+        if item.content == name:
             return item
 
 
