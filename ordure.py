@@ -172,8 +172,12 @@ for job in jobs:
         settings["tasks"][job["type"]]["id"] = item.id
         print(name, when)
         if item.due.date != due:
-            print("updating")
-            success = api.update_task(task_id=item.id, due_date=due, is_completed=False)
+            print("updating date")
+            success = api.update_task(task_id=item.id, due_date=due)
+            assert success, success
+        if item.is_completed:
+            print("opening")
+            success = api.reopen_task(task_id=item.id)
             assert success, success
         print(item)
     else:
