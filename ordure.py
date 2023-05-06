@@ -29,7 +29,7 @@ settings = yaml.safe_load(open(settings_name))
 def get_job_data():
     switch_dates = {}
     bank_holiday_data = requests.get(
-        "https://lewisham.gov.uk/myservices/wasterecycle/your-bins/collection/bank-holiday-bins"  # noqa: E501
+        "https://lewisham.gov.uk/myservices/wasterecycle/your-bins/collection/bank-holiday-bin"  # noqa: E501
     )
     if bank_holiday_data.status_code == 404:
         print("No bank holiday page")
@@ -75,7 +75,7 @@ def get_job_data():
             ).click()
         except selenium.common.exceptions.ElementNotInteractableException:
             pass
-        if driver.source().find("bank holiday") != -1 and switch_dates == {}:
+        if driver.source().lower().find("bank holiday") != -1 and switch_dates == {}:
             print("Seeing mention of bank holiday, but no dates known!")
 
             # FIXME: commented out because the current bank holiday link is to
@@ -85,14 +85,15 @@ def get_job_data():
                 r"of the bank holiday on (.+)</span>\. Your bins will be collected the day after your normal collection day. Normal collections will resume on ([^\.]+)\."  # noqa: E501
             )
             extra_dates = extra_dates_patt.search(driver.source())
-            assert extra_dates is not None, extra_dates
-            (start, end) = [dateparser.parse(d).date() for d in extra_dates.groups()]
-            current = start
-            while current < end:
-                switch_dates[current] = current + timedelta(days=1)
-                current += timedelta(days=1)
-            print("Revised bank holiday dates", switch_dates)
-            assert switch_dates != {}
+            assert extra_dates is None
+            # assert extra_dates is not None, extra_dates
+            # (start, end) = [dateparser.parse(d).date() for d in extra_dates.groups()]
+            # current = start
+            # while current < end:
+            #     switch_dates[current] = current + timedelta(days=1)
+            #     current += timedelta(days=1)
+            # print("Revised bank holiday dates", switch_dates)
+            # assert switch_dates != {}
 
         driver.find_element(By.CLASS_NAME, "js-address-finder-input").send_keys(
             settings["postcode"]
