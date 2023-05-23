@@ -62,7 +62,7 @@ regex==2020.7.14
     # via
     #   black
     #   dateparser
-requests==2.26.0
+requests==2.31.0
     # via
     #   -r requirements.in
     #   todoist-api-python
