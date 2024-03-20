@@ -10,7 +10,7 @@ attrs==22.1.0
     # via todoist-api-python
 beautifulsoup4==4.9.1
     # via -r requirements.in
-black==23.10.0
+black==24.3.0
     # via -r requirements.in
 certifi==2023.7.22
     # via requests
