@@ -82,7 +82,7 @@ toml==0.10.1
     # via pre-commit
 tzlocal==2.1
     # via dateparser
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   requests
     #   selenium
