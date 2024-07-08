@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Get settings
+      uses: mobiledevops/secret-to-file-action@v1
+      with:
+        base64-encoded-secret: ${{ secrets.SETTINGS_SECRET_BASE64 }}
+        filename: settings.yaml
+    - name: Run ordure
+      run: docker-compose up --build --exit-code-from ordure
