@@ -18,4 +18,4 @@ jobs:
         base64-encoded-secret: ${{ secrets.SETTINGS_SECRET_BASE64 }}
         filename: settings.yaml
     - name: Run ordure
-      run: docker-compose up --build --exit-code-from ordure
+      run: docker compose up --build --exit-code-from ordure
