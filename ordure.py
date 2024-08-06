@@ -31,7 +31,7 @@ def get_job_data():
     bank_holiday_data = requests.get(
         "https://lewisham.gov.uk/myservices/wasterecycle/your-bins/collection/bank-holiday-bin"  # noqa: E501
     )
-    if bank_holiday_data.status_code == 404:
+    if bank_holiday_data.status_code != 200:
         print("No bank holiday page")
     else:
         bank_holiday_data.raise_for_status()
@@ -103,13 +103,15 @@ def get_job_data():
         driver.wait_for_element(By.CSS_SELECTOR, "select#address-selector")
         for _ in range(5):
             try:
-                select = Select(driver.find_element(By.ID, "address-selector"))
+                select = Select(
+                    driver.find_element(By.CSS_SELECTOR, "select#address-selector")
+                )
                 if len(select.options) > 0:
                     break
                 driver.screenshot()
                 time.sleep(3)
             except StaleElementReferenceException:
-                pass
+                time.sleep(3)
         else:
             raise Exception("panic!")
         print("options", len(select.options))
