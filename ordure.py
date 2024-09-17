@@ -115,13 +115,17 @@ def get_job_data():
         else:
             raise Exception("panic!")
         print("options", len(select.options))
+        choices = []
         for opt in select.options:
-            if opt.text.find(settings["address"]) != -1:
+            if opt.text.lower().find(settings["address"].lower()) != -1:
                 print(opt.get_attribute("value"), opt.text)
                 opt.click()
                 break
+            choices.append(opt.text)
         else:
-            raise Exception
+            for c in sorted(choices):
+                print(c)
+            raise Exception()
         res = driver.wait_for_element(By.CLASS_NAME, "js-find-collection-result")
         bin_pattern = re.compile(
             r"(?P<type>[A-Za-z ]+) is collected (?P<frequency>[A-Z]+) on (?P<day>[A-Za-z]+)\.(?: Your next collection date is (?P<date>\d+/\d+/\d+))?"  # noqa: E501
