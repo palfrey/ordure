@@ -1,7 +1,9 @@
 version: '3'
 services:
   selenium:
-    image: selenium/standalone-firefox:94.0-20211105
+    image: selenium/standalone-firefox:134.0-20250606
+    ports:
+    - 4444:4444
   ordure:
     build: .
     command: bash -c "wait-for-it selenium:4444 --timeout=300 && python ordure.py"

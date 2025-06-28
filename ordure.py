@@ -139,9 +139,10 @@ def get_job_data():
 
 
 def search_for_job(name):
-    for item in api.get_tasks():
-        if item.content == name:
-            return item
+    for chunk in api.get_tasks():
+        for item in chunk:
+            if item.content == name:
+                return item
 
 
 (switch_dates, jobs) = get_job_data()
@@ -180,7 +181,7 @@ for job in jobs:
         print(name, when)
         if item.due.date != due:
             print("updating date")
-            success = api.update_task(task_id=item.id, due_date=due)
+            success = api.update_task(task_id=item.id, due_date=when)
             assert success, success
         if item.is_completed:
             print("opening")
@@ -188,6 +189,6 @@ for job in jobs:
             assert success, success
         print(item)
     else:
-        task = api.add_task(content=name, due_date=due)
+        task = api.add_task(content=name, due_date=when)
         print("Creating", name)
 yaml.safe_dump(settings, open(settings_name, "w"))
