@@ -76,7 +76,7 @@ typing-extensions==4.12.2
     # via black
 tzlocal==2.1
     # via dateparser
-urllib3==1.26.19
+urllib3==2.5.0
     # via
     #   requests
     #   selenium
