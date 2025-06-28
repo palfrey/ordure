@@ -31,9 +31,9 @@ repos:
 
 - repo: local
   hooks:
-  - id: pip-compile
-    name: pip-compile
+  - id: requirements
+    name: compile requirements
     language: system
-    entry: pip-compile
+    entry: make requirements.txt
     files: requirements.*
     pass_filenames: false
