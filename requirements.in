@@ -1,5 +1,5 @@
 selenium >=4
-todoist-api-python
+todoist-api-python <3
 pyyaml
 black
 requests
