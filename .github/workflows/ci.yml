@@ -19,5 +19,9 @@ jobs:
       with:
         base64-encoded-secret: ${{ secrets.SETTINGS_SECRET_BASE64 }}
         filename: settings.yaml
+    - name: Install asdf & tools
+      uses: asdf-vm/actions/install@v4
+    - name: Pyright
+      run: make pyright
     - name: Run ordure
       run: docker compose up --build --exit-code-from ordure

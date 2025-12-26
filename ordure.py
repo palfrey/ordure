@@ -6,12 +6,15 @@ from datetime import datetime, timedelta
 
 import dateparser
 import requests
-import selenium
 import yaml
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString, Tag
 from retry import retry
-from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    StaleElementReferenceException,
+    TimeoutException,
+)
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 from todoist_api_python.api import TodoistAPI
@@ -73,7 +76,7 @@ def get_job_data():
             driver.wait_for_element(
                 By.ID, "CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll"
             ).click()
-        except selenium.common.exceptions.ElementNotInteractableException:
+        except ElementNotInteractableException:
             pass
         if driver.source().lower().find("bank holiday") != -1 and switch_dates == {}:
             print("Seeing mention of bank holiday, but no dates known!")
@@ -140,9 +143,8 @@ def get_job_data():
 
 def search_for_job(name):
     for chunk in api.get_tasks():
-        for item in chunk:
-            if item.content == name:
-                return item
+        if chunk.content == name:
+            return item
 
 
 (switch_dates, jobs) = get_job_data()
@@ -179,7 +181,7 @@ for job in jobs:
     if item is not None:
         settings["tasks"][job["type"]]["id"] = item.id
         print(name, when)
-        if item.due.date != due:
+        if item.due is None or item.due.date != due:
             print("updating date")
             success = api.update_task(task_id=item.id, due_date=when)
             assert success, success

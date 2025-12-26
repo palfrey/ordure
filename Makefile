@@ -13,3 +13,6 @@ sync: .venv/bin/python requirements.txt
 local-run: sync
 	docker-compose up -d selenium
 	REMOTE_SELENIUM=http://localhost:4444/wd/hub .venv/bin/python ordure.py
+
+pyright: sync
+	.venv/bin/pyright --pythonpath .venv/bin/python .

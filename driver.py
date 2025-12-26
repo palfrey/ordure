@@ -12,7 +12,7 @@ class Driver:
         remote_url = os.environ.get("REMOTE_SELENIUM")
         if remote_url is None:
             options = webdriver.ChromeOptions()
-            options.headless = True
+            options.add_argument("--headless=new")
             options.add_argument("--no-sandbox")
             self.driver = webdriver.Chrome(options=options)
         else:
@@ -51,8 +51,11 @@ class Driver:
         return self.driver.page_source
 
     def logs(self):
-        for log in self.driver.get_log("browser"):
-            print("LOG", log)
+        if isinstance(self.driver, webdriver.Chrome):
+            for log in self.driver.get_log("browser"):
+                print("LOG", log)
+        else:
+            print("No logs for Firefox!")
 
     def screenshot(self):
         self.driver.save_screenshot("screenshot.png")
