@@ -183,7 +183,7 @@ for job in jobs:
         print(name, when)
         if item.due is None or item.due.date != due:
             print("updating date")
-            success = api.update_task(task_id=item.id, due_date=when)
+            success = api.update_task(task_id=item.id, due_date=str(when))
             assert success, success
         if item.is_completed:
             print("opening")
@@ -191,6 +191,6 @@ for job in jobs:
             assert success, success
         print(item)
     else:
-        task = api.add_task(content=name, due_date=when)
+        task = api.add_task(content=name, due_date=str(when))
         print("Creating", name)
 yaml.safe_dump(settings, open(settings_name, "w"))
