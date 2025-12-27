@@ -18,6 +18,7 @@ from selenium.common.exceptions import (
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 from todoist_api_python.api import TodoistAPI
+from todoist_api_python.models import Task
 
 from driver import Driver
 
@@ -141,10 +142,11 @@ def get_job_data():
         driver.quit()
 
 
-def search_for_job(name):
-    for chunk in api.get_tasks():
-        if chunk.content == name:
-            return item
+def search_for_job(name: str) -> Task | None:
+    for tasks in api.get_tasks():
+        for chunk in tasks:
+            if chunk.content == name:
+                return chunk
 
 
 (switch_dates, jobs) = get_job_data()
@@ -183,14 +185,14 @@ for job in jobs:
         print(name, when)
         if item.due is None or item.due.date != due:
             print("updating date")
-            success = api.update_task(task_id=item.id, due_date=str(when))
+            success = api.update_task(task_id=item.id, due_date=when)
             assert success, success
         if item.is_completed:
             print("opening")
-            success = api.reopen_task(task_id=item.id)
+            success = api.uncomplete_task(task_id=item.id)
             assert success, success
         print(item)
     else:
-        task = api.add_task(content=name, due_date=str(when))
+        task = api.add_task(content=name, due_date=when)
         print("Creating", name)
 yaml.safe_dump(settings, open(settings_name, "w"))
