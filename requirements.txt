@@ -20,7 +20,7 @@ click==8.1.7
     # via black
 dateparser==1.2.2
     # via -r requirements.in
-decorator==4.4.2
+decorator==5.2.1
     # via retry
 distlib==0.3.9
     # via virtualenv
