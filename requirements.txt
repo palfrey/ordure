@@ -76,7 +76,7 @@ sortedcontainers==2.4.0
     # via trio
 soupsieve==2.0.1
     # via beautifulsoup4
-todoist-api-python==2.1.7
+todoist-api-python==3.1.0
     # via -r requirements.in
 toml==0.10.1
     # via pre-commit
