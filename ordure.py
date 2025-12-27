@@ -18,6 +18,7 @@ from selenium.common.exceptions import (
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 from todoist_api_python.api import TodoistAPI
+from todoist_api_python.models import Task
 
 from driver import Driver
 
@@ -141,56 +142,61 @@ def get_job_data():
         driver.quit()
 
 
-def search_for_job(name):
-    for chunk in api.get_tasks():
-        if chunk.content == name:
-            return item
+def search_for_job(name: str) -> Task | None:
+    for tasks in api.get_tasks():
+        for chunk in tasks:
+            if chunk.content == name:
+                return chunk
 
 
 (switch_dates, jobs) = get_job_data()
 
-api = TodoistAPI(settings["api_key"])
-for job in jobs:
-    if job["date"]:
-        when = datetime.strptime(job["date"], "%d/%m/%Y")
-    else:
-        now = datetime.today()
-        dayNumber = calendar.weekday(now.year, now.month, now.day)
-        wantedDayNumber = list(calendar.day_name).index(job["day"])
-        if dayNumber < wantedDayNumber:
-            when = now + timedelta(days=wantedDayNumber - dayNumber)
+try:
+    api = TodoistAPI(settings["api_key"])
+    for job in jobs:
+        if job["date"]:
+            when = datetime.strptime(job["date"], "%d/%m/%Y")
         else:
-            when = now + timedelta(days=wantedDayNumber - dayNumber + 7)
-    when = when.date()
-    if when in switch_dates:
-        when = switch_dates[when]
-    when -= timedelta(days=1)
-    due = when.strftime("%Y-%m-%d")
-    name = f"Take out the {job['type']}"
-    if "tasks" not in settings:
-        settings["tasks"] = {}
-    if job["type"] not in settings["tasks"]:
-        settings["tasks"][job["type"]] = {}
-    job_id = settings["tasks"][job["type"]].get("id", None)
-    if job_id is not None:
-        print("id", job_id)
-        item = api.get_task(task_id=job_id)
-    else:
-        item = search_for_job(name)
+            now = datetime.today()
+            dayNumber = calendar.weekday(now.year, now.month, now.day)
+            wantedDayNumber = list(calendar.day_name).index(job["day"])
+            if dayNumber < wantedDayNumber:
+                when = now + timedelta(days=wantedDayNumber - dayNumber)
+            else:
+                when = now + timedelta(days=wantedDayNumber - dayNumber + 7)
+        when = when.date()
+        if when in switch_dates:
+            when = switch_dates[when]
+        when -= timedelta(days=1)
+        due = when.strftime("%Y-%m-%d")
+        name = f"Take out the {job['type']}"
+        if "tasks" not in settings:
+            settings["tasks"] = {}
+        if job["type"] not in settings["tasks"]:
+            settings["tasks"][job["type"]] = {}
+        job_id = settings["tasks"][job["type"]].get("id", None)
+        if job_id is not None:
+            print("id", job_id)
+            item = api.get_task(task_id=job_id)
+        else:
+            item = search_for_job(name)
 
-    if item is not None:
-        settings["tasks"][job["type"]]["id"] = item.id
-        print(name, when)
-        if item.due is None or item.due.date != due:
-            print("updating date")
-            success = api.update_task(task_id=item.id, due_date=str(when))
-            assert success, success
-        if item.is_completed:
-            print("opening")
-            success = api.reopen_task(task_id=item.id)
-            assert success, success
-        print(item)
-    else:
-        task = api.add_task(content=name, due_date=str(when))
-        print("Creating", name)
+        if item is not None:
+            settings["tasks"][job["type"]]["id"] = item.id
+            print(name, when)
+            if item.due is None or item.due.date != due:
+                print("updating date")
+                success = api.update_task(task_id=item.id, due_date=when)
+                assert success, success
+            if item.is_completed:
+                print("opening")
+                success = api.uncomplete_task(task_id=item.id)
+                assert success, success
+            print(item)
+        else:
+            task = api.add_task(content=name, due_date=when)
+            print("Creating", name)
+except requests.HTTPError as he:
+    print(he.response.json())
+    raise
 yaml.safe_dump(settings, open(settings_name, "w"))
