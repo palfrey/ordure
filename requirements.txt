@@ -94,7 +94,7 @@ typing-extensions==4.13.2
     # via
     #   pyright
     #   selenium
-tzlocal==2.1
+tzlocal==5.3.1
     # via dateparser
 urllib3[socks]==2.6.0
     # via
