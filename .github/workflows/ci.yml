@@ -23,5 +23,7 @@ jobs:
       uses: asdf-vm/actions/install@v4
     - name: Pyright
       run: make pyright
+    - name: pre-commit
+      run: make pre-commit
     - name: Run ordure
       run: docker compose up --build --exit-code-from ordure

@@ -1,7 +1,6 @@
 selenium >=4
 todoist-api-python <3
 pyyaml
-black
 requests
 beautifulsoup4
 dateparser

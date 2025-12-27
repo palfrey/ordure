@@ -16,3 +16,6 @@ local-run: sync
 
 pyright: sync
 	.venv/bin/pyright --pythonpath .venv/bin/python .
+
+pre-commit: sync
+	.venv/bin/pre-commit run -a
