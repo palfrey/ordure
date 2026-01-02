@@ -27,3 +27,5 @@ jobs:
       run: make pre-commit
     - name: Run ordure
       run: docker compose up --build --exit-code-from ordure
+    - name: Healthcheck
+      run: curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/${{ secrets.HC_PING_ID }}
