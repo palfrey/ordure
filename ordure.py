@@ -149,7 +149,7 @@ def search_for_job(name: str) -> Task | None:
                 return chunk
 
 
-(switch_dates, jobs) = get_job_data()
+switch_dates, jobs = get_job_data()
 
 try:
     api = TodoistAPI(settings["api_key"])
