@@ -100,7 +100,7 @@ urllib3[socks]==2.6.3
     # via
     #   requests
     #   selenium
-virtualenv==20.36.1
+virtualenv==21.2.0
     # via pre-commit
 websocket-client==1.8.0
     # via selenium
