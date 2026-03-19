@@ -2,7 +2,7 @@
 #    uv pip compile requirements.in -o requirements.txt --python-version 3.14 --no-strip-extras
 annotated-types==0.7.0
     # via todoist-api-python
-attrs==25.3.0
+attrs==26.1.0
     # via
     #   outcome
     #   trio
