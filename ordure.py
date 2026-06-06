@@ -11,7 +11,6 @@ from bs4 import BeautifulSoup
 from bs4.element import NavigableString, Tag
 from retry import retry
 from selenium.common.exceptions import (
-    ElementNotInteractableException,
     StaleElementReferenceException,
     TimeoutException,
 )
@@ -73,12 +72,6 @@ def get_job_data():
         driver.get(
             "https://lewisham.gov.uk/myservices/wasterecycle/your-bins/collection"
         )
-        try:
-            driver.wait_for_element(
-                By.ID, "CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll"
-            ).click()
-        except ElementNotInteractableException:
-            pass
         if driver.source().lower().find("bank holiday") != -1 and switch_dates == {}:
             print("Seeing mention of bank holiday, but no dates known!")
 
@@ -90,6 +83,7 @@ def get_job_data():
             )
             extra_dates = extra_dates_patt.search(driver.source())
             assert extra_dates is None
+            raise Exception
             # assert extra_dates is not None, extra_dates
             # (start, end) = [dateparser.parse(d).date() for d in extra_dates.groups()]
             # current = start
