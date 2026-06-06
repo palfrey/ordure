@@ -26,7 +26,7 @@ jobs:
       uses: actions/cache@v5
       with:
         path: ~/.asdf/
-        key: ${{ runner.os }}-${{ hashFiles('**/.tool-versions') }}
+        key: asdf-${{ runner.os }}-${{ hashFiles('**/.tool-versions') }}
     - name: Install CD tools from .tool-versions
       if: steps.asdf-cache.outputs.cache-hit != 'true'
       uses: asdf-vm/actions/install@v4
