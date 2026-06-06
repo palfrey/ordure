@@ -19,7 +19,16 @@ jobs:
         SETTINGS_BASE64: ${{ secrets.SETTINGS_SECRET_BASE64 }}
       run: |
         echo $SETTINGS_BASE64 | base64 --decode > settings.yaml
-    - name: Install asdf & tools
+    - name: Install asdf
+      uses: asdf-vm/actions/setup@v4
+    - name: asdf cache
+      id: asdf-cache
+      uses: actions/cache@v5
+      with:
+        path: ~/.asdf/
+        key: asdf-${{ runner.os }}-${{ hashFiles('**/.tool-versions') }}
+    - name: Install CD tools from .tool-versions
+      if: steps.asdf-cache.outputs.cache-hit != 'true'
       uses: asdf-vm/actions/install@v4
     - name: Pyright
       run: make pyright
