@@ -1,5 +1,5 @@
-settings.yaml.base64: settings.yaml
-	base64 settings.yaml > settings.yaml.base64
+settings.yaml.base64: settings.yaml Makefile
+	base64 -w 0 settings.yaml > settings.yaml.base64
 
 requirements.txt: requirements.in .tool-versions
 	uv pip compile requirements.in -o requirements.txt --python-version 3.14 --no-strip-extras
