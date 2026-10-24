@@ -6,9 +6,9 @@ services:
     - 4444:4444
   ordure:
     build: .
-    command: bash -c "wait-for-it selenium:4444 --timeout=300 && python ordure.py"
+    command: bash -c "wait-for-it selenium:4444 --timeout=300 && .venv/bin/python ordure.py"
     #command: sleep infinity
     volumes:
-    - .:/app
+    - .:/local
     environment:
     - REMOTE_SELENIUM=http://selenium:4444/wd/hub

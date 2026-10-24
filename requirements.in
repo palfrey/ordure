@@ -1,9 +1,0 @@
-selenium >=4
-todoist-api-python
-pyyaml
-requests
-beautifulsoup4
-dateparser
-retry
-pre-commit
-pyright
